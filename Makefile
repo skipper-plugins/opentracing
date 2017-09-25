@@ -4,6 +4,7 @@ PLUGINS            = $(shell for t in $(TRACERS); do echo build/tracing_$$t.so; 
 CURRENT_VERSION    = $(shell git tag | sort -V | tail -n1)
 VERSION           ?= $(CURRENT_VERSION)
 COMMIT_HASH        = $(shell git rev-parse --short HEAD)
+XGOPATH            = $(HOME)/go
 
 default: plugins
 
