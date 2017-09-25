@@ -1,0 +1,10 @@
+package: github.com/zalando-incubator/skipper-plugins
+import:
+- package: github.com/instana/golang-sensor
+  version: ~1.4.3
+#- package: github.com/lightstep/lightstep-tracer-go
+#  version: v0.14.0
+- package: github.com/zalando/skipper
+  version: ~v0.9.89
+ignore:
+  - github.com/opentracing/opentracing-go
