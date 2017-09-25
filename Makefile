@@ -7,15 +7,21 @@ COMMIT_HASH        = $(shell git rev-parse --short HEAD)
 
 default: plugins
 
-plugins: deps p $(PLUGINS) checks
+plugins: deps p $(PLUGINS) revert-p checks
 
 deps:
 	go get -t github.com/opentracing/opentracing-go
 	glide install
+
 checks: vet fmt tests
 
 p:
 	patch ./vendor/github.com/zalando/skipper/dataclients/kubernetes/kube.go < kube.go.patch
+
+revert-p:
+	cd $(XGOPATH)/src/github.com/zalando/skipper ;\
+		git co dataclients/kubernetes/kube.go ;\
+		cd $(XGOPATH)/src/github.bus.zalan.do/eagleeye/tracing-skipper
 
 tests:
 	go test -run LoadPlugin
