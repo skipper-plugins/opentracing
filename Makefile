@@ -12,6 +12,7 @@ plugins: deps p $(PLUGINS) revert-p checks
 
 deps:
 	go get -t github.com/opentracing/opentracing-go
+	glide update
 	glide install
 
 checks: vet fmt tests
