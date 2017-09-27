@@ -1,4 +1,4 @@
-package: github.com/zalando-incubator/skipper-plugins
+package: github.com/skipper-plugins/opentracing
 import:
 - package: github.com/instana/golang-sensor
   version: ~1.4.3
