@@ -8,7 +8,8 @@ XGOPATH            = $(HOME)/go
 
 default: plugins
 
-plugins: deps p $(PLUGINS) revert-p checks
+plugins: deps $(PLUGINS) checks
+#plugins: deps p $(PLUGINS) revert-p checks
 
 deps:
 	go get -t github.com/opentracing/opentracing-go
