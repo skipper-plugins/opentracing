@@ -1,5 +1,5 @@
 SOURCES            = $(shell find ./tracers -name '*.go' )
-TRACERS            = instana basic # lightstep
+TRACERS           ?= instana basic # lightstep
 PLUGINS            = $(shell for t in $(TRACERS); do echo build/tracing_$$t.so; done )
 CURRENT_VERSION    = $(shell git tag | sort -V | tail -n1)
 VERSION           ?= $(CURRENT_VERSION)
@@ -9,7 +9,6 @@ XGOPATH            = $(HOME)/go
 default: plugins
 
 plugins: deps $(PLUGINS) checks
-#plugins: deps p $(PLUGINS) revert-p checks
 
 deps:
 	go get -t github.com/opentracing/opentracing-go
@@ -17,14 +16,6 @@ deps:
 	glide install
 
 checks: vet fmt tests
-
-p:
-	patch ./vendor/github.com/zalando/skipper/dataclients/kubernetes/kube.go < kube.go.patch
-
-revert-p:
-	cd $(XGOPATH)/src/github.com/zalando/skipper ;\
-		git co dataclients/kubernetes/kube.go ;\
-		cd $(XGOPATH)/src/github.bus.zalan.do/eagleeye/tracing-skipper
 
 tests:
 	go test -run LoadPlugin
