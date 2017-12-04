@@ -1,5 +1,5 @@
 hash: a6ff906a6ad643da7b8278c1df8f7a370e381ea18fa50076c4404bfee6a172ea
-updated: 2017-09-27T15:20:06.989406211+02:00
+updated: 2017-12-04T12:24:25.433558693+01:00
 imports:
 - name: github.com/gogo/protobuf
   version: 2adc21fd136931e0388e278825291678e1d98309
@@ -14,7 +14,7 @@ imports:
   - ptypes/duration
   - ptypes/timestamp
 - name: github.com/instana/golang-sensor
-  version: 65336e6a673fa6ac32cc6bcf5651e92b445a2bb7
+  version: 617508adcd8f9897c995c6cf771c39ac645bbad3
 - name: github.com/lightstep/lightstep-tracer-go
   version: 8ea6e2a40aeb49f0a846212f919d156082f58e16
   subpackages:
@@ -29,7 +29,7 @@ imports:
   subpackages:
   - wire
 - name: github.com/zalando/skipper
-  version: c7e50fafb011b160decd2eee9028ad9a5774816b
+  version: b55f1ba8817240684c58106f1f2c5c664179b5e1
   subpackages:
   - tracing
 - name: golang.org/x/net
