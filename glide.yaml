@@ -6,5 +6,7 @@ import:
 #  version: v0.14.0
 - package: github.com/zalando/skipper
   version: ~v0.9.89
+- package: github.com/uber/jaeger-client-go
+  version: ^2.7.0
 ignore:
   - github.com/opentracing/opentracing-go
