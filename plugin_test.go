@@ -22,6 +22,12 @@ func TestLoadPluginBasic(t *testing.T) {
 	}
 }
 
+func TestLoadPluginJaeger(t *testing.T) {
+	if _, err := tracing.LoadPlugin(pluginDir, []string{"tracing_jaeger"}); err != nil {
+		t.Errorf("failed to load plugin `jaeger`: %s", err)
+	}
+}
+
 func TestLoadPluginInstana(t *testing.T) {
 	if _, err := tracing.LoadPlugin(pluginDir, []string{"tracing_instana"}); err != nil {
 		t.Errorf("failed to load plugin `instana`: %s", err)

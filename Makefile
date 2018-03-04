@@ -1,5 +1,5 @@
 SOURCES            = $(shell find ./tracers -name '*.go' )
-TRACERS           ?= instana basic # lightstep
+TRACERS           ?= instana basic jaeger # lightstep
 PLUGINS            = $(shell for t in $(TRACERS); do echo build/tracing_$$t.so; done )
 CURRENT_VERSION    = $(shell git tag | sort -V | tail -n1)
 VERSION           ?= $(CURRENT_VERSION)
