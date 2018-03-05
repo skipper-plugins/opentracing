@@ -10,3 +10,4 @@ import:
   version: ^2.7.0
 ignore:
   - github.com/opentracing/opentracing-go
+  - github.com/lightstep/lightstep-tracer-go
