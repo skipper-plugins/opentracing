@@ -1,5 +1,5 @@
 SOURCES            = $(shell find ./tracers -name '*.go' )
-TRACERS           ?= instana basic jaeger # lightstep
+TRACERS           ?= instana basic jaeger lightstep
 PLUGINS            = $(shell for t in $(TRACERS); do echo build/tracing_$$t.so; done )
 CURRENT_VERSION    = $(shell git tag | sort -V | tail -n1)
 VERSION           ?= $(CURRENT_VERSION)
@@ -12,6 +12,7 @@ plugins: deps $(PLUGINS) checks
 
 deps:
 	go get -t github.com/opentracing/opentracing-go
+	go get -t github.com/lightstep/lightstep-tracer-go
 	glide update
 	glide install
 
