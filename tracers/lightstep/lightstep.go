@@ -12,6 +12,7 @@ import (
 
 const (
 	defComponentName = "skipper"
+	defCollectorPort = 443
 )
 
 func InitTracer(opts []string) (opentracing.Tracer, error) {
@@ -27,12 +28,12 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 				componentName = parts[1]
 			}
 		case "token":
-			token = o[6:]
+			token = parts[1]
 		case "collector":
 			subparts := strings.Split(parts[1], ":")
 			host = subparts[0]
 			if len(subparts) == 1 {
-				port = 443
+				port = defCollectorPort
 			} else {
 				var err error
 				aport, err := strconv.Atoi(subparts[1])
@@ -49,7 +50,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 	}
 	if host == "" {
 		host = lightstep.DefaultGRPCCollectorHost
-		port = 443
+		port = defCollectorPort
 	}
 	return lightstep.NewTracer(lightstep.Options{
 		AccessToken: token,
