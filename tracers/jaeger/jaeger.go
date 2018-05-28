@@ -12,10 +12,15 @@ import (
 	"github.com/uber/jaeger-lib/metrics/prometheus"
 )
 
+const (
+	defServiceName = "skipper"
+)
+
 func InitTracer(opts []string) (opentracing.Tracer, error) {
 	metricsFactory := prometheus.New()
 
 	useRPCMetrics := false
+	serviceName := defServiceName
 	var err error
 	var samplerParam float64
 	var samplerType string
@@ -27,6 +32,11 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 	for _, o := range opts {
 		parts := strings.SplitN(o, "=", 2)
 		switch parts[0] {
+		case "service-name":
+			if len(parts) > 1 {
+				serviceName = parts[1]
+			}
+
 		case "use-rpc-metrics":
 			useRPCMetrics = true
 
@@ -79,7 +89,8 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 	}
 
 	conf := &config.Configuration{
-		Disabled: false,
+		ServiceName: serviceName,
+		Disabled:    false,
 		Sampler: &config.SamplerConfig{
 			Type:              samplerType,
 			Param:             samplerParam,
@@ -92,7 +103,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 		},
 		RPCMetrics: useRPCMetrics,
 	}
-	tracer, _, err := conf.New("skipper", config.Metrics(metricsFactory))
+	tracer, _, err := conf.NewTracer(config.Metrics(metricsFactory))
 	return tracer, err
 }
 

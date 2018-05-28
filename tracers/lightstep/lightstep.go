@@ -10,23 +10,34 @@ import (
 	opentracing "github.com/opentracing/opentracing-go"
 )
 
+const (
+	defComponentName = "skipper"
+)
+
 func InitTracer(opts []string) (opentracing.Tracer, error) {
+	componentName := defComponentName
 	var token, host string
 	var port int
+
 	for _, o := range opts {
-		switch {
-		case strings.HasPrefix(o, "token="):
+		parts := strings.SplitN(o, "=", 2)
+		switch parts[0] {
+		case "component-name":
+			if len(parts) > 1 {
+				componentName = parts[1]
+			}
+		case "token":
 			token = o[6:]
-		case strings.HasPrefix(o, "collector="):
-			parts := strings.Split(o[10:], ":")
-			host = parts[0]
-			if len(parts) == 1 {
+		case "collector":
+			subparts := strings.Split(parts[1], ":")
+			host = subparts[0]
+			if len(subparts) == 1 {
 				port = 443
 			} else {
 				var err error
-				aport, err := strconv.Atoi(parts[1])
+				aport, err := strconv.Atoi(subparts[1])
 				if err != nil {
-					return nil, fmt.Errorf("failed to parse %s as int: %s", parts[1], err)
+					return nil, fmt.Errorf("failed to parse %s as int: %s", subparts[1], err)
 				}
 				port = int(aport)
 			}
@@ -48,7 +59,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 		},
 		UseGRPC: true,
 		Tags: map[string]interface{}{
-			lightstep.ComponentNameKey: "skipper",
+			lightstep.ComponentNameKey: componentName,
 		},
 	}), nil
 }
