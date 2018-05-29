@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net"
 	"strconv"
 	"strings"
 
@@ -12,13 +13,12 @@ import (
 
 const (
 	defComponentName = "skipper"
-	defCollectorPort = 443
 )
 
 func InitTracer(opts []string) (opentracing.Tracer, error) {
 	componentName := defComponentName
-	var token, host string
 	var port int
+	var host, token string
 
 	for _, o := range opts {
 		parts := strings.SplitN(o, "=", 2)
@@ -30,28 +30,32 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 		case "token":
 			token = parts[1]
 		case "collector":
-			subparts := strings.Split(parts[1], ":")
-			host = subparts[0]
-			if len(subparts) == 1 {
-				port = defCollectorPort
-			} else {
-				var err error
-				aport, err := strconv.Atoi(subparts[1])
-				if err != nil {
-					return nil, fmt.Errorf("failed to parse %s as int: %s", subparts[1], err)
-				}
-				port = int(aport)
+			var err error
+			var sport string
+
+			host, sport, err = net.SplitHostPort(parts[1])
+			if err != nil {
+				return nil, err
+			}
+
+			port, err = strconv.Atoi(sport)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse %s as int: %s", sport, err)
 			}
 		}
-
 	}
+
+	// Token is required.
 	if token == "" {
 		return nil, errors.New("missing token= option")
 	}
+
+	// Set defaults.
 	if host == "" {
 		host = lightstep.DefaultGRPCCollectorHost
-		port = defCollectorPort
+		port = lightstep.DefaultSecurePort
 	}
+
 	return lightstep.NewTracer(lightstep.Options{
 		AccessToken: token,
 		Collector: lightstep.Endpoint{
