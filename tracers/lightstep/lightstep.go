@@ -40,7 +40,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 
 			port, err = strconv.Atoi(sport)
 			if err != nil {
-				return nil, fmt.Errorf("failed to parse %s as int: %s", sport, err)
+				return nil, fmt.Errorf("failed to parse %s as int: %v", sport, err)
 			}
 		}
 	}
