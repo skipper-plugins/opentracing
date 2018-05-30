@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net"
 	"strconv"
 	"strings"
 
@@ -10,36 +11,51 @@ import (
 	opentracing "github.com/opentracing/opentracing-go"
 )
 
+const (
+	defComponentName = "skipper"
+)
+
 func InitTracer(opts []string) (opentracing.Tracer, error) {
-	var token, host string
+	componentName := defComponentName
 	var port int
+	var host, token string
+
 	for _, o := range opts {
-		switch {
-		case strings.HasPrefix(o, "token="):
-			token = o[6:]
-		case strings.HasPrefix(o, "collector="):
-			parts := strings.Split(o[10:], ":")
-			host = parts[0]
-			if len(parts) == 1 {
-				port = 443
-			} else {
-				var err error
-				aport, err := strconv.Atoi(parts[1])
-				if err != nil {
-					return nil, fmt.Errorf("failed to parse %s as int: %s", parts[1], err)
-				}
-				port = int(aport)
+		parts := strings.SplitN(o, "=", 2)
+		switch parts[0] {
+		case "component-name":
+			if len(parts) > 1 {
+				componentName = parts[1]
+			}
+		case "token":
+			token = parts[1]
+		case "collector":
+			var err error
+			var sport string
+
+			host, sport, err = net.SplitHostPort(parts[1])
+			if err != nil {
+				return nil, err
+			}
+
+			port, err = strconv.Atoi(sport)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse %s as int: %v", sport, err)
 			}
 		}
-
 	}
+
+	// Token is required.
 	if token == "" {
 		return nil, errors.New("missing token= option")
 	}
+
+	// Set defaults.
 	if host == "" {
 		host = lightstep.DefaultGRPCCollectorHost
-		port = 443
+		port = lightstep.DefaultSecurePort
 	}
+
 	return lightstep.NewTracer(lightstep.Options{
 		AccessToken: token,
 		Collector: lightstep.Endpoint{
@@ -48,7 +64,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 		},
 		UseGRPC: true,
 		Tags: map[string]interface{}{
-			lightstep.ComponentNameKey: "skipper",
+			lightstep.ComponentNameKey: componentName,
 		},
 	}), nil
 }
