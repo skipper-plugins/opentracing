@@ -19,6 +19,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 	componentName := defComponentName
 	var port int
 	var host, token string
+	var cmdLine string
 
 	for _, o := range opts {
 		parts := strings.SplitN(o, "=", 2)
@@ -42,6 +43,8 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse %s as int: %v", sport, err)
 			}
+		case "cmd-line":
+			cmdLine = parts[1]
 		}
 	}
 
@@ -65,6 +68,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 		UseGRPC: true,
 		Tags: map[string]interface{}{
 			lightstep.ComponentNameKey: componentName,
+			lightstep.CommandLineKey:   cmdLine,
 		},
 	}), nil
 }
