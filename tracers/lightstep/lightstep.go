@@ -20,6 +20,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 	var port int
 	var host, token string
 	var cmdLine string
+	var logCmdLine bool
 
 	for _, o := range opts {
 		parts := strings.SplitN(o, "=", 2)
@@ -45,6 +46,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 			}
 		case "cmd-line":
 			cmdLine = parts[1]
+			logCmdLine = true
 		}
 	}
 
@@ -59,6 +61,12 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 		port = lightstep.DefaultSecurePort
 	}
 
+	tags := map[string]interface{}{
+		lightstep.ComponentNameKey: componentName,
+	}
+	if logCmdLine {
+		tags[lightstep.CommandLineKey] = cmdLine
+	}
 	return lightstep.NewTracer(lightstep.Options{
 		AccessToken: token,
 		Collector: lightstep.Endpoint{
@@ -66,9 +74,6 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 			Port: port,
 		},
 		UseGRPC: true,
-		Tags: map[string]interface{}{
-			lightstep.ComponentNameKey: componentName,
-			lightstep.CommandLineKey:   cmdLine,
-		},
+		Tags:    tags,
 	}), nil
 }
