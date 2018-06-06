@@ -21,6 +21,7 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 	var host, token string
 	var cmdLine string
 	var logCmdLine bool
+	var maxBufferedSpans int
 
 	for _, o := range opts {
 		parts := strings.SplitN(o, "=", 2)
@@ -47,6 +48,11 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 		case "cmd-line":
 			cmdLine = parts[1]
 			logCmdLine = true
+		case "max-buffered-spans":
+			var err error
+			if maxBufferedSpans, err = strconv.Atoi(parts[1]); err != nil {
+				return nil, fmt.Errorf("failed to parse max buffered spans: %v", err)
+			}
 		}
 	}
 
@@ -73,7 +79,8 @@ func InitTracer(opts []string) (opentracing.Tracer, error) {
 			Host: host,
 			Port: port,
 		},
-		UseGRPC: true,
-		Tags:    tags,
+		UseGRPC:          true,
+		Tags:             tags,
+		MaxBufferedSpans: maxBufferedSpans,
 	}), nil
 }
