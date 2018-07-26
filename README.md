@@ -18,3 +18,6 @@ A dockerized [skipper](https://github.com/zalando/skipper) with [Opentracing](ht
 Please note the problems that may arise when using plugins together with vendoring, best described here:
 
 https://github.com/golang/go/issues/20481
+
+In case of the opentracing plugins, the import path conflict will most certainly happen with vendoring because
+the plugin interface includes types from the github.com/opentracing/opentracing-go library.
