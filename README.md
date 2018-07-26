@@ -20,4 +20,5 @@ Please note the problems that may arise when using plugins together with vendori
 https://github.com/golang/go/issues/20481
 
 In case of the opentracing plugins, the import path conflict will most certainly happen with vendoring because
-the plugin interface includes types from the github.com/opentracing/opentracing-go library.
+the interface between the plugin and Skipper includes types from the github.com/opentracing/opentracing-go 3rd
+party library.
