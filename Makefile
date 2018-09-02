@@ -8,13 +8,7 @@ XGOPATH            = $(HOME)/go
 
 default: plugins
 
-plugins: deps $(PLUGINS) checks
-
-deps:
-	go get -t github.com/opentracing/opentracing-go
-	go get -t github.com/lightstep/lightstep-tracer-go
-	glide update
-	glide install
+plugins: $(PLUGINS) checks
 
 checks: vet fmt tests
 
@@ -33,7 +27,7 @@ test:
 $(PLUGINS): $(SOURCES)
 	mkdir -p build/
 	MODULE=$(shell basename $@ .so | sed -e 's/tracing_//' ); \
-		   go build -buildmode=plugin -o $@ tracers/$$MODULE/$$MODULE.go
+		go build -buildmode=plugin -o $@ tracers/$$MODULE/$$MODULE.go
 
 clean:
-	rm -f build/*.so
+	rm -rf build
